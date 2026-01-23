@@ -7,7 +7,7 @@ import com.jammingmods.plugin.WarhammerFantasyPlugin;
 
 public class Whf_ComponentRegistries {
     public static ComponentType<EntityStore, Whf_FactionComponent> FACTION_COMPONENT_TYPE;
-    public void RegisterFactionComponent(WarhammerFantasyPlugin plugin) {
+    public static void RegisterFactionComponent(WarhammerFantasyPlugin plugin) {
         FACTION_COMPONENT_TYPE = plugin.getEntityStoreRegistry().registerComponent(
                 Whf_FactionComponent.class,
                 "warhammerfantasy:faction_component",

@@ -8,7 +8,7 @@
         "Traits": {
           "MeleeDamage": 0.1,
           "RangedDamage": 0.1,
-          "UltimateBuildup": 0.15
+          "SignatureBuildup": 2.0
         }
     },
     {

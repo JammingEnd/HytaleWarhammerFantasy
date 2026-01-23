@@ -18,7 +18,7 @@
         "Traits": {
           "RandomRangedDamage": 0.5,
           "EnableSkavenGambleMechanic": 1.0,
-          "MoveSpeed": -0.1,
+          "MoveSpeed": -0.075,
           "DamageTakenFromExplosions": -0.2
         }
     },

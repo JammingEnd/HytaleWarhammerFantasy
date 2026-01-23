@@ -178,7 +178,6 @@ public class Whf_CharacterSelectorUIPage extends InteractiveCustomUIPage<Whf_Cha
         // Handle confirmation of the selected faction and subtype
         Player player = (Player) store.getComponent(ref, Player.getComponentType());
 
-        player.sendMessage(Message.raw("Confirming selection..."));
 
         Whf_FactionComponent faction = new Whf_FactionComponent(
                 selectedFaction.TYPE_ID,
@@ -188,17 +187,20 @@ public class Whf_CharacterSelectorUIPage extends InteractiveCustomUIPage<Whf_Cha
                 selectedFaction.traits
         );
 
+        player.sendMessage(Message.raw("Confirming selection: " + faction.GetSubtypeName()));
+
         if(store.getComponent(ref, Whf_ComponentRegistries.FACTION_COMPONENT_TYPE) != null) {
-            player.sendMessage(Message.raw("Updating existing faction..."));
-            var component = store.ensureAndGetComponent(ref, Whf_ComponentRegistries.FACTION_COMPONENT_TYPE);
-            component.Update(faction);
+            store.removeComponent(ref, Whf_ComponentRegistries.FACTION_COMPONENT_TYPE);
+            store.putComponent(ref, Whf_ComponentRegistries.FACTION_COMPONENT_TYPE, faction);
+            String message = "You Changed to a " + faction.GetSubtypeName() + "!";
+            player.sendMessage(Message.raw(message));
         }
         else {
             store.putComponent(ref, Whf_ComponentRegistries.FACTION_COMPONENT_TYPE, faction);
             String message = "You Became a " + faction.GetSubtypeName() + "!" + " | other info: " + faction.getFactionId();
             player.sendMessage(Message.raw(message));
         }
-        store.saveAllResources();
+        //store.saveAllResources();
         this.close();
     }
 
