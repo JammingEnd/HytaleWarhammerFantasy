@@ -1,0 +1,7 @@
+{
+  "Group": "com.jammingmods",
+  "Name": "WarhammerFantasy",
+  "Version": "1.0.0",
+  "Main": "com.jammingmods.plugin.WarhammerFantasyPlugin",
+  "IncludesAssetPack": true
+}

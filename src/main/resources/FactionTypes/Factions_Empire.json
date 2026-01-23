@@ -1,0 +1,34 @@
+
+{
+  "Type": "Empire",
+  "SubTypes": [
+    {
+      "Name": "Imperial Knight",
+      "Desc": "A strong footsoldier of the empire, resilient en versatile.",
+        "Traits": {
+          "MeleeDamage": 0.1,
+          "RangedDamage": 0.1,
+          "UltimateBuildup": 0.15
+        }
+    },
+    {
+      "Name": "Empire Engineer",
+      "Desc": "A master of machinery and artillery, providing support from the backlines.",
+        "Traits": {
+          "RangedDamage": 0.2,
+          "ToolDurability": 0.15,
+          "GunPowderDamage": 0.15,
+          "MeleeDamage": -0.1
+        }
+    },
+    {
+      "Name": "Imperial Wizard",
+      "Desc": "While Potent, the empire wizards are rather inconsistent with their power.",
+        "Traits": {
+          "RandomSpellDamage": 0.2,
+          "ManaRegen": 0.1,
+          "SpellCastingSpeed": 0.1
+        }
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+
+{
+  "Type": "Skaven",
+  "SubTypes": [
+    {
+      "Name": "SkavenSlave",
+      "Desc": "Filth, weak and expendable. The frontbone and meat of the Skaven armies, weak but fast and cowardly.",
+        "Traits": {
+          "MaxHealth": -0.15,
+          "MoveSpeedWhileLowHealth": 0.25,
+          "MeleeDamageInAllyProximity": 0.2,
+          "HealingFromFood": 1.0
+        }
+    },
+    {
+      "Name": "Skaven Engineer",
+      "Desc": "True genius or Unfanthomable madness? it doesnt matter cause they build deadly tools. deadly for who? doesnt matter.",
+        "Traits": {
+          "RandomRangedDamage": 0.5,
+          "EnableSkavenGambleMechanic": 1.0,
+          "MoveSpeed": -0.1,
+          "DamageTakenFromExplosions": -0.2
+        }
+    },
+    {
+      "Name": "Plague Monk",
+      "Desc": "Invested with faith and more diseases than you can count, these fanatics spread pestilence and death wherever they go.",
+        "Traits": {
+          "SkavenPoisonOnMelee": 1.0,
+          "AttackSpeed": 0.1,
+          "HealthOnPoisonedKill": 0.05
+        }
+    }
+  ]
+}

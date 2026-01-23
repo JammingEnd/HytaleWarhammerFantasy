@@ -1,0 +1,86 @@
+$C = "../Common.ui";
+
+@ButtonStyle = TextButtonStyle(
+    Default: (Background: #333333, LabelStyle: (FontSize: 20, TextColor: #96a9be, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center)),
+    Hovered: (Background: #515248, LabelStyle: (FontSize: 20, TextColor: #b6c9de, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center)),
+    Pressed: (Background: #72735f, LabelStyle: (FontSize: 20, TextColor: #96a9be, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center))
+);
+
+Group {
+  LayoutMode: Top;
+  Background: #191a18;
+  Anchor: (Width: 800, Height: 500);
+  Group #TitleBar {
+    LayoutMode: Middle;
+    Background: #333333;
+    Label #Title {
+      Style: (TextColor: #ffffff, FontSize: 24, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center);
+      Text: "Warhammer Fantasy Character Selector!";
+    }
+  }
+  Group #SelectionGroup {
+    LayoutMode: Top;
+    Background: #333333;
+    Group #FactionSelectorGroup {
+      LayoutMode: CenterMiddle;
+      Background: #333333;
+      Anchor: (Bottom: 4);
+      TextButton #FactionPrevButton {
+        Style: @ButtonStyle;
+        Anchor: (Right: -9);
+        FlexWeight: -1;
+        Text: "<";
+      }
+      Label #FactionName {
+        Style: (TextColor: #ffffff, FontSize: 20);
+        Anchor: (Left: 10, Right: 10);
+        Text: "Empire";
+      }
+      TextButton #FactionNextButton {
+        Style: @ButtonStyle;
+        FlexWeight: -1;
+        Text: ">";
+      }
+    }
+    Group #SubtypeSelectorGroupcopy {
+      LayoutMode: CenterMiddle;
+      Background: #333333;
+      Anchor: (Bottom: 12);
+      TextButton #SubtypePrevButton {
+        Style: @ButtonStyle;
+        Anchor: (Right: -9);
+        FlexWeight: -1;
+        Text: "<";
+      }
+      Label #SubtypeName {
+        Style: (TextColor: #ffffff, FontSize: 20);
+        Anchor: (Left: 10, Right: 10);
+        Text: "Wizard";
+      }
+      TextButton #SubtypeNextButton {
+        Style: @ButtonStyle;
+        FlexWeight: -1;
+        Text: ">";
+      }
+    }
+  }
+  Group #BuffGroup {
+    LayoutMode: Top;
+    Background: #333333;
+    FlexWeight: 1;
+    Padding: (Left: 25, Right: 25);
+    Label #BuffLabel {
+      Style: (TextColor: #ffffff);
+      FlexWeight: 1;
+      Text: "Speed +10%";
+    }
+  }
+  Group #ButtonGroup {
+    LayoutMode: Top;
+    Background: #333333;
+    TextButton #ConfirmButton {
+      Style: @ButtonStyle;
+        Text: "Confirm!";
+    }
+  }
+}
