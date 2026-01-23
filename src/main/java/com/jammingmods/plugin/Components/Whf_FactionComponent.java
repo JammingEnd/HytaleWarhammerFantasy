@@ -5,7 +5,6 @@ import com.hypixel.hytale.codec.KeyedCodec;
 import com.hypixel.hytale.codec.builder.BuilderCodec;
 import com.hypixel.hytale.codec.codecs.map.MapCodec;
 import com.hypixel.hytale.component.Component;
-import com.hypixel.hytale.component.ComponentType;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
@@ -13,20 +12,20 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.OptionalDouble;
 
-public final class FactionComponent implements Component<EntityStore> {
+public final class Whf_FactionComponent implements Component<EntityStore> {
     private String TYPE_ID; // Empire:Imperial_Knight
     private String Category;   // Empire
     private String Name;       // Imperial Knight
     private String Description;
     private Map<String, Double> Traits;
-    public FactionComponent(String typeId, String category, String name, String description, Map<String, Double> traits) {
+    public Whf_FactionComponent(String typeId, String category, String name, String description, Map<String, Double> traits) {
         this.TYPE_ID = typeId;
         this.Category = category;
         this.Name = name;
         this.Description = description;
         this.Traits = traits;
     }
-    public FactionComponent(FactionComponent other) {
+    public Whf_FactionComponent(Whf_FactionComponent other) {
         this.TYPE_ID = other.TYPE_ID;
         this.Category = other.Category;
         this.Name = other.Name;
@@ -34,15 +33,15 @@ public final class FactionComponent implements Component<EntityStore> {
         this.Traits = other.Traits;
     }
 
-    public FactionComponent() {
+    public Whf_FactionComponent() {
 
     }
     @NullableDecl
     @Override
     public Component<EntityStore> clone() {
-        return new FactionComponent(this);
+        return new Whf_FactionComponent(this);
     }
-    public void Update(FactionComponent other) {
+    public void Update(Whf_FactionComponent other) {
         this.TYPE_ID = other.TYPE_ID;
         this.Category = other.Category;
         this.Name = other.Name;
@@ -73,8 +72,8 @@ public final class FactionComponent implements Component<EntityStore> {
     }
 
     // build codec here right?
-    public static final BuilderCodec<FactionComponent> CODEC = BuilderCodec.builder(
-            FactionComponent.class, FactionComponent::new)
+    public static final BuilderCodec<Whf_FactionComponent> CODEC = BuilderCodec.builder(
+            Whf_FactionComponent.class, Whf_FactionComponent::new)
             .append(new KeyedCodec<>("TYPE_ID", Codec.STRING),
                     (c, v) -> c.TYPE_ID = v,
                     c -> c.TYPE_ID).add()

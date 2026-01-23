@@ -1,6 +1,6 @@
 package com.jammingmods.plugin.Readers;
 
-import com.jammingmods.plugin.FactionTypes.FactionType;
+import com.jammingmods.plugin.FactionTypes.Whf_FactionType;
 
 import java.io.*;
 import java.net.*;
@@ -9,21 +9,21 @@ import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-public final class FactionTypeParser {
+public final class Whf_FactionTypeParser {
 
-    private final HashMap<String, FactionType> registry = new HashMap<>();
+    private final HashMap<String, Whf_FactionType> registry = new HashMap<>();
 
-    public FactionTypeParser() {
+    public Whf_FactionTypeParser() {
         loadFromResources("FactionTypes");
     }
 
-    public HashMap<String, FactionType> getRegistry() {
+    public HashMap<String, Whf_FactionType> getRegistry() {
         return registry;
     }
 
-    public static FactionType[] loadFactionTypes() {
+    public static Whf_FactionType[] loadFactionTypes() {
         try {
-            FactionTypeParser parser = new FactionTypeParser();
+            Whf_FactionTypeParser parser = new Whf_FactionTypeParser();
             var factionRegistry = parser.getRegistry();
 
             if (factionRegistry.isEmpty()) {
@@ -31,10 +31,10 @@ public final class FactionTypeParser {
             }
 
             // sorting based on category
-            FactionType[] typeOrdered = factionRegistry.values()
+            Whf_FactionType[] typeOrdered = factionRegistry.values()
                     .stream()
                     .sorted(Comparator.comparing(f -> f.category))
-                    .toArray(FactionType[]::new);
+                    .toArray(Whf_FactionType[]::new);
 
             return typeOrdered;
 
@@ -109,7 +109,7 @@ public final class FactionTypeParser {
     private void parseAndRegister(String source, InputStream in) throws IOException {
         String json = new String(in.readAllBytes(), StandardCharsets.UTF_8);
 
-        for (FactionType faction : parse(json)) {
+        for (Whf_FactionType faction : parse(json)) {
             String id = faction.category + ":" + faction.name;
 
             if (registry.containsKey(id)) {
@@ -123,13 +123,13 @@ public final class FactionTypeParser {
     }
 
     // ---------------- parser ----------------
-    public static List<FactionType> parse(String json) {
+    public static List<Whf_FactionType> parse(String json) {
         json = stripWhitespace(json);
 
         String category = extractString(json, "\"Type\":");
         String subTypesArray = extractArray(json, "\"SubTypes\":");
 
-        List<FactionType> result = new ArrayList<>();
+        List<Whf_FactionType> result = new ArrayList<>();
 
         for (String obj : splitObjects(subTypesArray)) {
             String name = extractString(obj, "\"Name\":");
@@ -139,7 +139,7 @@ public final class FactionTypeParser {
 
             Map<String, Double> traits = parseTraits(traitsObj);
 
-            result.add(new FactionType(
+            result.add(new Whf_FactionType(
                     id,
                     category,
                     name,

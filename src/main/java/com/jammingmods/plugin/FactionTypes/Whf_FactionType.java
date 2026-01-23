@@ -1,16 +1,15 @@
 package com.jammingmods.plugin.FactionTypes;
 
-import java.util.HashMap;
 import java.util.Map;
 
-public final class FactionType {
+public final class Whf_FactionType {
 
     public String TYPE_ID; // Empire:Imperial_Knight
     public String category;   // Empire
     public String name;       // Imperial Knight
     public String description;
     public Map<String, Double> traits;
-    public FactionType(
+    public Whf_FactionType(
             String typeId,
             String category,
             String name,

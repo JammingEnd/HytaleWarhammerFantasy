@@ -9,12 +9,13 @@ import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
+import com.jammingmods.plugin.Registries.Whf_ComponentRegistries;
 import com.jammingmods.plugin.WarhammerFantasyPlugin;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
-public class PlayerFactionInfoCommand extends AbstractPlayerCommand {
-    public PlayerFactionInfoCommand() {
-        super("PlayerInfo", "Print the info on the Player FactionComponent", false);
+public class Whf_PlayerFactionInfoCommand extends AbstractPlayerCommand {
+    public Whf_PlayerFactionInfoCommand() {
+        super("PlayerInfo", "Print the info on the Player Whf_FactionComponent", false);
     }
 
     @Override
@@ -25,7 +26,7 @@ public class PlayerFactionInfoCommand extends AbstractPlayerCommand {
             @NonNullDecl PlayerRef playerRef,
             @NonNullDecl World world)
     {
-        var comp = store.getComponent(ref, WarhammerFantasyPlugin.FACTION_COMPONENT_TYPE);
+        var comp = store.getComponent(ref, Whf_ComponentRegistries.FACTION_COMPONENT_TYPE);
         Player player = (Player) store.getComponent(ref, Player.getComponentType());
 
         if(comp != null) {
@@ -37,7 +38,7 @@ public class PlayerFactionInfoCommand extends AbstractPlayerCommand {
                 player.sendMessage(Message.raw(" - " + trait.getKey() + ": " + trait.getValue()));
             }
         } else {
-            player.sendMessage(Message.raw("No FactionComponent found on player."));
+            player.sendMessage(Message.raw("No Whf_FactionComponent found on player."));
         }
     }
 }

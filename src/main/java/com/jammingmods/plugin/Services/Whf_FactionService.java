@@ -1,18 +1,18 @@
 package com.jammingmods.plugin.Services;
 
-import com.jammingmods.plugin.FactionTypes.FactionType;
-import com.jammingmods.plugin.Readers.FactionTypeParser;
+import com.jammingmods.plugin.FactionTypes.Whf_FactionType;
+import com.jammingmods.plugin.Readers.Whf_FactionTypeParser;
 
 import java.util.Map;
 
-public final class FactionService {
+public final class Whf_FactionService {
 
-    private static FactionService INSTANCE;
+    private static Whf_FactionService INSTANCE;
 
-    private final Map<String, FactionType> factions;
+    private final Map<String, Whf_FactionType> factions;
 
-    private FactionService() {
-        FactionTypeParser parser = new FactionTypeParser();
+    private Whf_FactionService() {
+        Whf_FactionTypeParser parser = new Whf_FactionTypeParser();
         this.factions = parser.getRegistry();
     }
 
@@ -20,18 +20,18 @@ public final class FactionService {
         if (INSTANCE != null) {
             throw new IllegalStateException("FactionService already initialized");
         }
-        INSTANCE = new FactionService();
+        INSTANCE = new Whf_FactionService();
     }
 
-    public static FactionService get() {
+    public static Whf_FactionService get() {
         if (INSTANCE == null) {
             throw new IllegalStateException("FactionService not initialized");
         }
         return INSTANCE;
     }
 
-    public FactionType getFaction(String id) {
-        FactionType faction = factions.get(id);
+    public Whf_FactionType getFaction(String id) {
+        Whf_FactionType faction = factions.get(id);
         if (faction == null) {
             throw new IllegalArgumentException("Unknown faction: " + id);
         }
