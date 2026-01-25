@@ -19,7 +19,6 @@ import com.jammingmods.plugin.Components.Whf_FactionComponent;
 import com.jammingmods.plugin.FactionTypes.Whf_FactionType;
 import com.jammingmods.plugin.Readers.Whf_FactionTypeParser;
 import com.jammingmods.plugin.Registries.Whf_ComponentRegistries;
-import com.jammingmods.plugin.WarhammerFantasyPlugin;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
@@ -73,14 +72,11 @@ public class Whf_CharacterSelectorUIPage extends InteractiveCustomUIPage<Whf_Cha
     public void build(@Nonnull Ref<EntityStore> ref, @Nonnull UICommandBuilder cmd, @Nonnull UIEventBuilder evt, @Nonnull Store<EntityStore> store) {
         cmd.append("Pages/WarhammerFantasy_CharacterSelector.ui");
 
-        Player player = (Player) store.getComponent(ref, Player.getComponentType());
+        Player player = store.getComponent(ref, Player.getComponentType());
         player.sendMessage(Message.raw("availableFactions length:: " + availableFactions.length));
 
         // var config = MyPlugin.getInstance().config.get();
-        if(availableFactions == null)
-        {
-            cmd.set("#FactionName.Text", "NULL :(");
-        } else if (availableFactions.length == 0) {
+        if (availableFactions.length == 0) {
             cmd.set("#FactionName.Text", "NOTHING :/");
         } else {
             // Update UI elements based on selected indices
@@ -111,8 +107,6 @@ public class Whf_CharacterSelectorUIPage extends InteractiveCustomUIPage<Whf_Cha
     @Override
     public void handleDataEvent(@Nonnull Ref<EntityStore> ref, @Nonnull Store<EntityStore> store, @Nonnull BindingData data) {
         super.handleDataEvent(ref, store, data);
-        Player player = (Player) store.getComponent(ref, Player.getComponentType());
-
             switch (data.action) {
                 case "PrevFaction":
                     scrollFactions(-1);
@@ -132,7 +126,8 @@ public class Whf_CharacterSelectorUIPage extends InteractiveCustomUIPage<Whf_Cha
                 default:
                     break;
             }
-        updateUI(player, store, ref, playerRef);
+
+            this.rebuild();
 
     }
 
@@ -176,7 +171,7 @@ public class Whf_CharacterSelectorUIPage extends InteractiveCustomUIPage<Whf_Cha
 
     private void confirmSelection(@Nonnull Ref<EntityStore> ref, @Nonnull Store<EntityStore> store) {
         // Handle confirmation of the selected faction and subtype
-        Player player = (Player) store.getComponent(ref, Player.getComponentType());
+        Player player = store.getComponent(ref, Player.getComponentType());
 
 
         Whf_FactionComponent faction = new Whf_FactionComponent(
@@ -204,11 +199,6 @@ public class Whf_CharacterSelectorUIPage extends InteractiveCustomUIPage<Whf_Cha
         }
         //store.saveAllResources();
         this.close();
-    }
-
-    private void updateUI(Player player, Store<EntityStore> store, Ref<EntityStore> ref, PlayerRef playerRef) {
-        Whf_CharacterSelectorUIPage newPage = new Whf_CharacterSelectorUIPage(playerRef, this);
-        player.getPageManager().openCustomPage(ref, store, newPage);
     }
 
 }

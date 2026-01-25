@@ -7,7 +7,7 @@ import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 
 public class Whf_ComponentsHelpers {
-    public static Component<EntityStore> getOrPutComponent(Ref ref, Store store, ComponentType componentType, Component inst){
+    /*public static Component<EntityStore> getOrPutComponent(Ref ref, Store store, ComponentType componentType, Component inst){
         var targetComponent = store.getComponent(ref, componentType);
         if(targetComponent == null){
             store.putComponent(ref, componentType, inst);
@@ -25,5 +25,5 @@ public class Whf_ComponentsHelpers {
         } else {
             return targetComponent;
         }
-    }
+    }*/
 }

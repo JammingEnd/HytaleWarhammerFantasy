@@ -23,6 +23,7 @@ public class Whf_SettingReapplyOnConnect extends RefSystem<EntityStore> {
 
         if(stats != null){
             Whf_playerStatsModifierMethods.ApplyConfigSettings(stats, factionComponent.getTraits(), player, store, ref, playerRef);
+            Whf_playerStatsModifierMethods.HandleTraitComponents(stats, factionComponent.getTraits(), player, store, ref, playerRef, commandBuffer);
         }
     }
 

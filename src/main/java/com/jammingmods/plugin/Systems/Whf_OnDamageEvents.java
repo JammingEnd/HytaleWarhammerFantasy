@@ -1,18 +1,21 @@
 package com.jammingmods.plugin.Systems;
 
-import com.hypixel.hytale.component.ArchetypeChunk;
-import com.hypixel.hytale.component.CommandBuffer;
-import com.hypixel.hytale.component.Store;
+import com.hypixel.hytale.component.*;
 import com.hypixel.hytale.component.query.Query;
+import com.hypixel.hytale.server.core.Message;
+import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.modules.entity.damage.Damage;
 import com.hypixel.hytale.server.core.modules.entity.damage.DamageEventSystem;
+import com.hypixel.hytale.server.core.modules.entity.damage.DamageModule;
 import com.hypixel.hytale.server.core.modules.entitystats.EntityStatMap;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
+import com.jammingmods.plugin.Components.PlayerTraitComponents.TraitDamageType;
 import com.jammingmods.plugin.Components.Whf_FactionComponent;
-import com.jammingmods.plugin.Helpers.Whf_LogicHelpers;
 import com.jammingmods.plugin.Registries.Whf_ComponentRegistries;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
+import javax.annotation.Nullable;
 
 public class Whf_OnDamageEvents extends DamageEventSystem {
     @Override
@@ -23,17 +26,88 @@ public class Whf_OnDamageEvents extends DamageEventSystem {
             @NonNullDecl CommandBuffer<EntityStore> cmd,
             @NonNullDecl Damage damage)
     {
-        //TODO: this method runs on the enemy being hit, i need to get the Source and check if it has FactionComponent
+
         Whf_FactionComponent component = chunk.getComponent(i, Whf_ComponentRegistries.FACTION_COMPONENT_TYPE);
-        // Skaven gamble effect
-        if(component.getTraitValue("EnableSkavenGambleMechanic").isPresent() && Whf_LogicHelpers.Roll(component.getTraitValue("EnableSkavenGambleMechanic").getAsDouble())){
+        Ref<EntityStore> ref = null;
+        Store<EntityStore> sourceStore = null;
+        if(!(damage.getSource() instanceof Damage.ProjectileSource) && damage.getSource() instanceof Damage.EntitySource) {
+            Damage.EntitySource source = (Damage.EntitySource)damage.getSource();
+            ref = source.getRef();
+            sourceStore = ref.getStore();
+            // increase melee damage
+            if(sourceStore != null){
+                HandleDamageModifier(damage, ref, sourceStore, TraitDamageType.MELEE);
+            }
+
+        } else if (damage.getSource() instanceof Damage.ProjectileSource) {
+            Damage.ProjectileSource source = (Damage.ProjectileSource)damage.getSource();
+            ref = source.getRef();
+
+            //TODO: check if the projectile is a magic thing or not
+
+            if(ref.getStore().getComponent(ref, Whf_ComponentRegistries.FACTION_COMPONENT_TYPE) != null){
+                sourceStore = ref.getStore();
+                // increase ranged damage
+
+            }
+        } else if (damage.getSource() instanceof Damage.EnvironmentSource) {
+            Damage.EnvironmentSource source = (Damage.EnvironmentSource)damage.getSource();
+            // ah damn
+        }
+
+        if(sourceStore != null){
+            // handle all the damage modification data
+            if(ref == null && !ref.isValid()) { return; }
+
+            Player player = sourceStore.getComponent(ref, Player.getComponentType());
+            HandleSkavenGambleDamage(damage, ref, store, player);
+
+        }
+
+
+    }
+
+    private void HandleDamageModifier(Damage damage, Ref<EntityStore> ref, Store<EntityStore> store, TraitDamageType type){
+        if(store.getComponent(ref, Whf_ComponentRegistries.DAMAGE_INCREASE_COMPONENT_TYPE) != null){
+            var di_c = store.getComponent(ref, Whf_ComponentRegistries.DAMAGE_INCREASE_COMPONENT_TYPE);
+            if(di_c.getType() == type){
+                float oldDamage = damage.getAmount();
+                float newDamage = damage.getAmount() * (1 + di_c.getValue().floatValue());
+
+                damage.setAmount(newDamage);
+            }
         }
     }
+
+    private void HandleSkavenGambleDamage(Damage damage, Ref<EntityStore> ref, Store<EntityStore> store, Player player)
+    {
+        if(store.getComponent(ref, Whf_ComponentRegistries.SKAVEN_GAMBLE_COMPONENT_TYPE) != null){
+            var s_c = store.getComponent(ref, Whf_ComponentRegistries.SKAVEN_GAMBLE_COMPONENT_TYPE);
+            if(s_c.GetRoll()){
+                float oldDamage = damage.getAmount();
+                float newDamage = damage.getAmount() * (0.5f + s_c.getDamageMultiplier());
+                damage.setAmount(newDamage);
+
+                player.sendMessage(Message.raw("Roll succeed, multiplier: " + (1 + s_c.getDamageMultiplier())));
+                player.sendMessage(Message.raw("Old Damage: " + oldDamage + " - New Damage: " + newDamage));
+
+            } else {
+                player.sendMessage(Message.raw("Roll failed"));
+            }
+        }
+    }
+
 
     @NullableDecl
     @Override
     public Query<EntityStore> getQuery() {
         // basically every entity
         return EntityStatMap.getComponentType();
+    }
+
+    @Nullable
+    @Override
+    public SystemGroup<EntityStore> getGroup() {
+        return DamageModule.get().getGatherDamageGroup();
     }
 }

@@ -1,5 +1,6 @@
 package com.jammingmods.plugin.Helpers;
 
+import com.hypixel.hytale.component.CommandBuffer;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.protocol.MovementSettings;
@@ -182,8 +183,13 @@ public class Whf_playerStatsModifierMethods {
             Player player,
             @NonNullDecl Store<EntityStore> store,
             @NonNullDecl Ref<EntityStore> ref,
-            PlayerRef playerRef)
+            PlayerRef playerRef,
+            CommandBuffer<EntityStore> cmb)
     {
+        RemovePresentFromPlayer(store, ref, cmb);
+
+        boolean AppliedDI = false;
+
         for (Map.Entry<String, Double> entry : statModifiers.entrySet()) {
             String type = entry.getKey();
             Double value = entry.getValue();
@@ -193,18 +199,36 @@ public class Whf_playerStatsModifierMethods {
                 case "RangedDamage":
                 case "MagicDamage":
                 case "AllDamage":
-                    DamageIncreaseDamageComponent(store, ref, type, value);
+                    if(!AppliedDI){
+                        DamageIncreaseDamageComponent(store, ref, cmb, type, value);
+                        AppliedDI = true;
+                    }
                     break;
                 case "EnableSkavenGambleMechanic":
                     Whf_SkavenGambleDamageComponent SGDC = new Whf_SkavenGambleDamageComponent(value);
-                    store.addComponent(ref, Whf_ComponentRegistries.SKAVEN_GAMBLE_COMPONENT_TYPE, SGDC);
+                    cmb.addComponent(ref, Whf_ComponentRegistries.SKAVEN_GAMBLE_COMPONENT_TYPE, SGDC);
+                    player.sendMessage(Message.raw("Enabling SkavenGamble mechanic"));
                     break;
 
             }
         }
     }
 
-    private static void DamageIncreaseDamageComponent(@NonNullDecl Store<EntityStore> store, @NonNullDecl Ref<EntityStore> ref, String key, Double value){
+    private static void RemovePresentFromPlayer(
+            @NonNullDecl Store<EntityStore> store,
+            @NonNullDecl Ref<EntityStore> ref,
+            CommandBuffer<EntityStore> cmb)
+    {
+        if(cmb.getComponent(ref, Whf_ComponentRegistries.DAMAGE_INCREASE_COMPONENT_TYPE) != null){
+            cmb.removeComponent(ref, Whf_ComponentRegistries.DAMAGE_INCREASE_COMPONENT_TYPE);
+        }
+        if(cmb.getComponent(ref, Whf_ComponentRegistries.SKAVEN_GAMBLE_COMPONENT_TYPE) != null){
+            cmb.removeComponent(ref, Whf_ComponentRegistries.SKAVEN_GAMBLE_COMPONENT_TYPE);
+        }
+
+    }
+
+    private static void DamageIncreaseDamageComponent(@NonNullDecl Store<EntityStore> store, @NonNullDecl Ref<EntityStore> ref, CommandBuffer<EntityStore> cmb, String key, Double value){
         TraitDamageType type;
         switch (key)
         {
@@ -222,7 +246,7 @@ public class Whf_playerStatsModifierMethods {
                 break;
         }
         Whf_DamageIncreaseComponent c = new Whf_DamageIncreaseComponent(type, value);
-        store.addComponent(ref, Whf_ComponentRegistries.DAMAGE_INCREASE_COMPONENT_TYPE, c);
+        cmb.addComponent(ref, Whf_ComponentRegistries.DAMAGE_INCREASE_COMPONENT_TYPE, c);
     }
 }
 

@@ -11,7 +11,9 @@ import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 import java.util.Random;
 
 public class Whf_SkavenGambleDamageComponent implements Component<EntityStore> {
-
+    private boolean Rolled;
+    private float DamageMultiplierRange = 2.0f;
+    private float DamageMultiplier = 1.0f;
    private Double Chance;
    public Double getChance() {
       return this.Chance;
@@ -21,21 +23,30 @@ public class Whf_SkavenGambleDamageComponent implements Component<EntityStore> {
        return this.SelfDamage;
    }
 
-   public boolean GetRoll(){
+   public void Roll(){
+       Random rand = new Random();
        if(this.Chance >= 1){
-           return true;
+           Rolled = true;
        } else if (this.Chance <= 0.01) {
-           return false;
+           Rolled = false;
        } else  {
-           Random rand = new Random();
            int roll = rand.nextInt(100);
            double d_roll = roll * 0.01;
            if (this.Chance >= d_roll) {
-               return true;
+               Rolled = true;
            } else {
-               return false;
+               Rolled = false;
            }
        }
+       this.DamageMultiplier = rand.nextFloat(DamageMultiplierRange);
+   }
+
+   public float getDamageMultiplier() {
+       return this.DamageMultiplier;
+   }
+
+   public boolean GetRoll() {
+       return Rolled;
    }
    public Whf_SkavenGambleDamageComponent(){}
    public  Whf_SkavenGambleDamageComponent(Double chance) {
