@@ -17,6 +17,10 @@ import com.hypixel.hytale.server.core.modules.entitystats.modifier.StaticModifie
 import com.hypixel.hytale.server.core.modules.physics.component.PhysicsValues;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
+import com.jammingmods.plugin.Components.PlayerTraitComponents.TraitDamageType;
+import com.jammingmods.plugin.Components.PlayerTraitComponents.Whf_DamageIncreaseComponent;
+import com.jammingmods.plugin.Components.PlayerTraitComponents.Whf_SkavenGambleDamageComponent;
+import com.jammingmods.plugin.Registries.Whf_ComponentRegistries;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
 import java.util.Map;
@@ -33,7 +37,6 @@ public class Whf_playerStatsModifierMethods {
         for (Map.Entry<String, Double> entry : statModifiers.entrySet()) {
             String statName = entry.getKey();
             Double modifierValue = entry.getValue();
-            EntityStatValue statValue;
             switch (statName) {
                 case "MaxHealth":
                     int healthIndex = DefaultEntityStatTypes.getHealth();
@@ -49,7 +52,6 @@ public class Whf_playerStatsModifierMethods {
                     break;
                 case "MaxStamina":
                     int staminaIndex = DefaultEntityStatTypes.getStamina();
-                    statValue = stats.get(staminaIndex);
                     StaticModifier staminaModifier = new StaticModifier(
                             Modifier.ModifierTarget.MAX,
                             StaticModifier.CalculationType.MULTIPLICATIVE,
@@ -59,7 +61,6 @@ public class Whf_playerStatsModifierMethods {
                     break;
                 case "MaxMana":
                     int manaIndex = DefaultEntityStatTypes.getMana();
-                    statValue = stats.get(manaIndex);
                     StaticModifier manaModifier = new StaticModifier(
                             Modifier.ModifierTarget.MAX,
                             StaticModifier.CalculationType.MULTIPLICATIVE,
@@ -69,7 +70,6 @@ public class Whf_playerStatsModifierMethods {
                     break;
                 case "MaxOxygen":
                     int oxygenIndex = DefaultEntityStatTypes.getOxygen();
-                    statValue = stats.get(oxygenIndex);
                     StaticModifier oxygenModifier = new StaticModifier(
                             Modifier.ModifierTarget.MAX,
                             StaticModifier.CalculationType.MULTIPLICATIVE,
@@ -175,6 +175,54 @@ public class Whf_playerStatsModifierMethods {
         movementManager.applyDefaultSettings();
         movementManager.update(playerRef.getPacketHandler());
         player.sendMessage(Message.raw("Applied MoveSpeed modifier: " + modifierValue));
+    }
+
+    public static void HandleTraitComponents(
+            EntityStatMap stats, Map<String, Double> statModifiers,
+            Player player,
+            @NonNullDecl Store<EntityStore> store,
+            @NonNullDecl Ref<EntityStore> ref,
+            PlayerRef playerRef)
+    {
+        for (Map.Entry<String, Double> entry : statModifiers.entrySet()) {
+            String type = entry.getKey();
+            Double value = entry.getValue();
+            switch (type)
+            {
+                case "MeleeDamage":
+                case "RangedDamage":
+                case "MagicDamage":
+                case "AllDamage":
+                    DamageIncreaseDamageComponent(store, ref, type, value);
+                    break;
+                case "EnableSkavenGambleMechanic":
+                    Whf_SkavenGambleDamageComponent SGDC = new Whf_SkavenGambleDamageComponent(value);
+                    store.addComponent(ref, Whf_ComponentRegistries.SKAVEN_GAMBLE_COMPONENT_TYPE, SGDC);
+                    break;
+
+            }
+        }
+    }
+
+    private static void DamageIncreaseDamageComponent(@NonNullDecl Store<EntityStore> store, @NonNullDecl Ref<EntityStore> ref, String key, Double value){
+        TraitDamageType type;
+        switch (key)
+        {
+            case "MeleeDamage":
+                type = TraitDamageType.MELEE;
+                break;
+            case "RangedDamage":
+                type = TraitDamageType.RANGED;
+                break;
+            case "MagicDamage":
+                type = TraitDamageType.MAGIC;
+                break;
+            default:
+                type = TraitDamageType.ALL;
+                break;
+        }
+        Whf_DamageIncreaseComponent c = new Whf_DamageIncreaseComponent(type, value);
+        store.addComponent(ref, Whf_ComponentRegistries.DAMAGE_INCREASE_COMPONENT_TYPE, c);
     }
 }
 

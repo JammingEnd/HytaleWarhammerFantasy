@@ -192,11 +192,13 @@ public class Whf_CharacterSelectorUIPage extends InteractiveCustomUIPage<Whf_Cha
         if(store.getComponent(ref, Whf_ComponentRegistries.FACTION_COMPONENT_TYPE) != null) {
             store.removeComponent(ref, Whf_ComponentRegistries.FACTION_COMPONENT_TYPE);
             store.putComponent(ref, Whf_ComponentRegistries.FACTION_COMPONENT_TYPE, faction);
+
             String message = "You Changed to a " + faction.GetSubtypeName() + "!";
             player.sendMessage(Message.raw(message));
         }
         else {
             store.putComponent(ref, Whf_ComponentRegistries.FACTION_COMPONENT_TYPE, faction);
+
             String message = "You Became a " + faction.GetSubtypeName() + "!" + " | other info: " + faction.getFactionId();
             player.sendMessage(Message.raw(message));
         }

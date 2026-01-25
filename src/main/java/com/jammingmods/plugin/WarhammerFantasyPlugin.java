@@ -26,9 +26,11 @@ public class WarhammerFantasyPlugin extends JavaPlugin {
 
         // register components
         Whf_ComponentRegistries.RegisterFactionComponent(this);
-
+        Whf_ComponentRegistries.RegisterDamageIncreaseComponent(this);
+        Whf_ComponentRegistries.RegisterSkavenGambleComponent(this);
         // register systems
         Whf_SystemRegistries.RegisterSystems(this);
+
 
         // commands
         this.getCommandRegistry().registerCommand(new Whf_CharacterSelectorCommand());
