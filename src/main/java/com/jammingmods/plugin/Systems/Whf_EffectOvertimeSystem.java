@@ -36,7 +36,7 @@ public class Whf_EffectOvertimeSystem extends EntityTickingSystem<EntityStore> {
     @NullableDecl
     @Override
     public Query<EntityStore> getQuery() {
-        return Query.and(Whf_ComponentRegistries.EFFECT_OVERTIME_COMPONENT_TYPE);
+        return Whf_ComponentRegistries.EFFECT_OVERTIME_COMPONENT_TYPE;
     }
     @Nullable
     @Override

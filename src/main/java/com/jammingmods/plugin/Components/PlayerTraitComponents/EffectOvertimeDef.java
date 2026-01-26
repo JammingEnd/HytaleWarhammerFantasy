@@ -83,7 +83,7 @@ public class EffectOvertimeDef {
             .addField(new KeyedCodec<>("Interval", Codec.FLOAT),
                     (data, value) -> data.interval = value,
                     data -> data.interval)
-            .addField(new KeyedCodec<>("elapsedTime", Codec.FLOAT),
+            .addField(new KeyedCodec<>("ElapsedTime", Codec.FLOAT),
                     (data, value) -> data.elapsedTime = value,
                     data -> data.elapsedTime)
             .build();

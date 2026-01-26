@@ -15,7 +15,7 @@ import java.util.List;
 
 public class Whf_EffectOvertimeComponent implements Component<EntityStore> {
 
-    private List<EffectOvertimeDef> activeEffects;
+    private List<EffectOvertimeDef> activeEffects = new ArrayList<>();
 
     @NullableDecl
     @Override

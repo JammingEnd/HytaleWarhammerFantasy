@@ -24,7 +24,7 @@ public class Whf_ProximityTickSystem extends EntityTickingSystem<EntityStore> {
     @NullableDecl
     @Override
     public Query<EntityStore> getQuery() {
-        return Query.and(Whf_ComponentRegistries.PROXIMITY_STAT_COMPONENT_TYPE);
+        return Whf_ComponentRegistries.PROXIMITY_STAT_COMPONENT_TYPE;
     }
 
     @Nullable
