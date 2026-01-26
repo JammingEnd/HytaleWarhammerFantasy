@@ -48,6 +48,7 @@ public class Whf_OnDamageEvents extends DamageEventSystem {
             if(ref.getStore().getComponent(ref, Whf_ComponentRegistries.FACTION_COMPONENT_TYPE) != null){
                 sourceStore = ref.getStore();
                 // increase ranged damage
+                HandleDamageModifier(damage, ref, sourceStore, TraitDamageType.RANGED);
 
             }
         } else if (damage.getSource() instanceof Damage.EnvironmentSource) {
