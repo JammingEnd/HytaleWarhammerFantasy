@@ -27,6 +27,9 @@ public class WarhammerFantasyPlugin extends JavaPlugin {
         Whf_ComponentRegistries.RegisterFactionComponent(this);
         Whf_ComponentRegistries.RegisterDamageIncreaseComponent(this);
         Whf_ComponentRegistries.RegisterSkavenGambleComponent(this);
+        //Whf_ComponentRegistries.RegisterProximityStatComponent(this);
+        Whf_ComponentRegistries.RegisterEffectOvertimeComponent(this);
+
         // register systems
         Whf_SystemRegistries.RegisterSystems(this);
 

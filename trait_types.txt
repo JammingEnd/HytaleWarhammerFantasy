@@ -1,14 +1,14 @@
 AttackSpeed
 DamageTakenFromExplosions
-EnableSkavenGambleMechanic
+EnableSkavenGambleMechanic x
 GunPowderDamage
 HealingFromFood
 HealthOnPoisonedKill
 ManaRegen
-MaxHealth
-MeleeDamage
+MaxHealth x
+MeleeDamage x
 MeleeDamageInAllyProximity
-MoveSpeed
+MoveSpeed x
 MoveSpeedWhileLowHealth
 RandomRangedDamage
 RandomSpellDamage

@@ -1,0 +1,11 @@
+{
+  "Types": [
+    {
+      "Type" : "SkavenPoison",
+      "TickDamage" : 10.0,
+      "MaxStacks": 1,
+      "DurationTicks" : 200,
+      "IntervalTicks" : 20
+    }
+  ]
+}

@@ -38,6 +38,7 @@ public class Whf_FactionComponentListenerSystem extends RefChangeSystem<EntitySt
             Whf_playerStatsModifierMethods.ApplyPermanentStatModifiers(stats, factionComponent.getTraits(), player, store, ref, playerRef);
             Whf_playerStatsModifierMethods.ApplyConfigSettings(stats, factionComponent.getTraits(), player, store, ref, playerRef);
             Whf_playerStatsModifierMethods.HandleTraitComponents(stats, factionComponent.getTraits(), player, store, ref, playerRef, commandBuffer);
+            Whf_playerStatsModifierMethods.HandleProximityBonuses(stats, factionComponent.getTraits(), player, store, ref, playerRef, commandBuffer);
         }
 
     }

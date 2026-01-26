@@ -3,6 +3,7 @@ package com.jammingmods.plugin.Systems;
 import com.hypixel.hytale.component.*;
 import com.hypixel.hytale.component.query.Query;
 import com.hypixel.hytale.server.core.Message;
+import com.hypixel.hytale.server.core.asset.type.item.config.ItemWeapon;
 import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.modules.entity.damage.Damage;
 import com.hypixel.hytale.server.core.modules.entity.damage.DamageEventSystem;
@@ -10,12 +11,16 @@ import com.hypixel.hytale.server.core.modules.entity.damage.DamageModule;
 import com.hypixel.hytale.server.core.modules.entitystats.EntityStatMap;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.jammingmods.plugin.Components.PlayerTraitComponents.TraitDamageType;
+import com.jammingmods.plugin.Components.Whf_EffectOvertimeComponent;
 import com.jammingmods.plugin.Components.Whf_FactionComponent;
+import com.jammingmods.plugin.Readers.Whf_EffectOvertimeContainer;
+import com.jammingmods.plugin.Readers.Whf_EffectOvertimeParser;
 import com.jammingmods.plugin.Registries.Whf_ComponentRegistries;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 import javax.annotation.Nullable;
+import java.util.Map;
 
 public class Whf_OnDamageEvents extends DamageEventSystem {
     @Override
@@ -64,8 +69,6 @@ public class Whf_OnDamageEvents extends DamageEventSystem {
             HandleSkavenGambleDamage(damage, ref, store, player);
 
         }
-
-
     }
 
     private void HandleDamageModifier(Damage damage, Ref<EntityStore> ref, Store<EntityStore> store, TraitDamageType type){
@@ -94,6 +97,25 @@ public class Whf_OnDamageEvents extends DamageEventSystem {
 
             } else {
                 player.sendMessage(Message.raw("Roll failed"));
+            }
+        }
+    }
+
+    /// Manage the effects on EffectOvertimeComponent
+    /// Duration is in ticks, 20 ticks is one second
+    /// Interval is in ticks, so 20 interval means every second it fires
+    private void ApplyOvertimeEffects(Whf_FactionComponent f_c, Ref<EntityStore> ref, Store<EntityStore> store, Player player){
+        Whf_EffectOvertimeComponent eo_c = store.getComponent(ref, Whf_ComponentRegistries.EFFECT_OVERTIME_COMPONENT_TYPE);
+        if(eo_c == null) {
+            store.putComponent(ref, Whf_ComponentRegistries.EFFECT_OVERTIME_COMPONENT_TYPE, new Whf_EffectOvertimeComponent());
+        }
+        for (Map.Entry<String, Double> entry : f_c.getTraits().entrySet()){
+            String type = entry.getKey();
+            Double value = entry.getValue();
+            switch (type){
+                case "SkavenPoisonOnMelee":
+                    Whf_EffectOvertimeContainer e_v = Whf_EffectOvertimeParser.GetByType("SkavenPoison");
+                    eo_c.AddEffectOrIncreaseStacks(e_v.Type, e_v.TickDamage, e_v.DurationTicks, e_v.MaxStacks, e_v.Interval);
             }
         }
     }

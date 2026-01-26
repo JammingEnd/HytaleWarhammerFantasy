@@ -20,14 +20,17 @@ import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.jammingmods.plugin.Components.PlayerTraitComponents.TraitDamageType;
 import com.jammingmods.plugin.Components.PlayerTraitComponents.Whf_DamageIncreaseComponent;
+import com.jammingmods.plugin.Components.PlayerTraitComponents.Whf_EntityType;
 import com.jammingmods.plugin.Components.PlayerTraitComponents.Whf_SkavenGambleDamageComponent;
+import com.jammingmods.plugin.Components.Whf_ProximityStatComponent;
 import com.jammingmods.plugin.Registries.Whf_ComponentRegistries;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
 import java.util.Map;
 
 public class Whf_playerStatsModifierMethods {
-    /// For available stats see the json files, i might want to index them via a command or something
+
+    //region StatModifier (Statmap)
     public static void ApplyPermanentStatModifiers(
             EntityStatMap stats, Map<String, Double> statModifiers,
             Player player,
@@ -47,7 +50,6 @@ public class Whf_playerStatsModifierMethods {
                             1 + modifierValue.floatValue()
                     );
                     stats.putModifier(healthIndex, "subtype_MaxHealth", modifier);
-
                     player.sendMessage(Message.raw("Applied MaxHealth modifier: " + modifierValue.floatValue()));
 
                     break;
@@ -91,6 +93,7 @@ public class Whf_playerStatsModifierMethods {
         }
     }
 
+
     @NonNullDecl
     private static RegeneratingValue getRegeneratingValue(RegeneratingValue[] gah, Double modifierValue) {
         var gih = gah[0];
@@ -107,7 +110,9 @@ public class Whf_playerStatsModifierMethods {
         var geh = new RegeneratingValue(gouh);
         return geh;
     }
+    //endregion
 
+    //region Reset
     public static void ResetModifiers(
             EntityStatMap stats,
             Map<String, Double> statModifiers,
@@ -140,7 +145,9 @@ public class Whf_playerStatsModifierMethods {
             }
         }
     }
+    //endregion
 
+    //region Config stats
     public static void ApplyConfigSettings(
             EntityStatMap stats,
             Map<String, Double> statModifiers,
@@ -177,7 +184,9 @@ public class Whf_playerStatsModifierMethods {
         movementManager.update(playerRef.getPacketHandler());
         player.sendMessage(Message.raw("Applied MoveSpeed modifier: " + modifierValue));
     }
+    //endregion
 
+    //region trait components
     public static void HandleTraitComponents(
             EntityStatMap stats, Map<String, Double> statModifiers,
             Player player,
@@ -213,21 +222,6 @@ public class Whf_playerStatsModifierMethods {
             }
         }
     }
-
-    private static void RemovePresentFromPlayer(
-            @NonNullDecl Store<EntityStore> store,
-            @NonNullDecl Ref<EntityStore> ref,
-            CommandBuffer<EntityStore> cmb)
-    {
-        if(cmb.getComponent(ref, Whf_ComponentRegistries.DAMAGE_INCREASE_COMPONENT_TYPE) != null){
-            cmb.removeComponent(ref, Whf_ComponentRegistries.DAMAGE_INCREASE_COMPONENT_TYPE);
-        }
-        if(cmb.getComponent(ref, Whf_ComponentRegistries.SKAVEN_GAMBLE_COMPONENT_TYPE) != null){
-            cmb.removeComponent(ref, Whf_ComponentRegistries.SKAVEN_GAMBLE_COMPONENT_TYPE);
-        }
-
-    }
-
     private static void DamageIncreaseDamageComponent(@NonNullDecl Store<EntityStore> store, @NonNullDecl Ref<EntityStore> ref, CommandBuffer<EntityStore> cmb, String key, Double value){
         TraitDamageType type;
         switch (key)
@@ -248,5 +242,50 @@ public class Whf_playerStatsModifierMethods {
         Whf_DamageIncreaseComponent c = new Whf_DamageIncreaseComponent(type, value);
         cmb.addComponent(ref, Whf_ComponentRegistries.DAMAGE_INCREASE_COMPONENT_TYPE, c);
     }
+    //endregion
+
+    //region removing
+    private static void RemovePresentFromPlayer(
+            @NonNullDecl Store<EntityStore> store,
+            @NonNullDecl Ref<EntityStore> ref,
+            CommandBuffer<EntityStore> cmb)
+    {
+        if(cmb.getComponent(ref, Whf_ComponentRegistries.DAMAGE_INCREASE_COMPONENT_TYPE) != null){
+            cmb.removeComponent(ref, Whf_ComponentRegistries.DAMAGE_INCREASE_COMPONENT_TYPE);
+        }
+        if(cmb.getComponent(ref, Whf_ComponentRegistries.SKAVEN_GAMBLE_COMPONENT_TYPE) != null){
+            cmb.removeComponent(ref, Whf_ComponentRegistries.SKAVEN_GAMBLE_COMPONENT_TYPE);
+        }
+
+    }
+    //endregion
+
+    //region Proximity Bonuses
+
+    public static void HandleProximityBonuses(
+            EntityStatMap stats,
+            Map<String, Double> statModifiers,
+            Player player,
+            @NonNullDecl Store<EntityStore> store,
+            @NonNullDecl Ref<EntityStore> ref,
+            PlayerRef playerRef,
+            CommandBuffer<EntityStore> cmb)
+    {
+        Whf_ProximityStatComponent c = store.getComponent(ref, Whf_ComponentRegistries.PROXIMITY_STAT_COMPONENT_TYPE);
+        if(c != null){
+            c.ClearModifiers();
+            for (Map.Entry<String, Double> entry : statModifiers.entrySet()) {
+                String type = entry.getKey();
+                Double value = entry.getValue();
+                switch (type)
+                {
+                    case "MeleeDamageInAllyProximity":
+                        c.AddModifier(type, value, 1, 3, true, TraitDamageType.MELEE, Whf_EntityType.ALLY);
+                }
+            }
+        }
+    }
+
+    //endregion
 }
 
