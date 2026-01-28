@@ -30,6 +30,7 @@ public class Whf_EffectOvertimeComponent implements Component<EntityStore> {
     public void AddEffectOrIncreaseStacks(String type, Double TickDamage, int Duration, int maxStacks, float Interval) {
         EffectOvertimeDef effect = TryGetEffect(type);
         if(effect != null) {
+            effect.ResetTickcount(Duration);
             effect.AddStack();
         } else {
             activeEffects.add(new EffectOvertimeDef(type, TickDamage, Duration, maxStacks, Interval));

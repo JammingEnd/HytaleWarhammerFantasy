@@ -11,6 +11,7 @@ import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.jammingmods.plugin.Components.PlayerTraitComponents.EffectOvertimeDef;
 import com.jammingmods.plugin.Components.Whf_EffectOvertimeComponent;
 import com.jammingmods.plugin.Registries.Whf_ComponentRegistries;
+import com.jammingmods.plugin.WarhammerFantasyPlugin;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
@@ -29,8 +30,8 @@ public class Whf_EffectOvertimeSystem extends EntityTickingSystem<EntityStore> {
             Damage damage = new Damage(Damage.NULL_SOURCE, DamageCause.OUT_OF_WORLD, effect.GetDamagePerTick().floatValue());
             DamageSystems.executeDamage(ref, commandBuffer, damage);
             effect.DecrementRemainingTicks();
+            WarhammerFantasyPlugin.LOGGER.atInfo().log(effect.ToString());
         }
-
     }
 
     @NullableDecl

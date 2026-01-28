@@ -3,7 +3,9 @@ package com.jammingmods.plugin.Systems;
 import com.hypixel.hytale.component.*;
 import com.hypixel.hytale.component.query.Query;
 import com.hypixel.hytale.server.core.Message;
-import com.hypixel.hytale.server.core.asset.type.item.config.ItemWeapon;
+import com.hypixel.hytale.server.core.asset.type.entityeffect.config.EntityEffect;
+import com.hypixel.hytale.server.core.asset.type.entityeffect.config.OverlapBehavior;
+import com.hypixel.hytale.server.core.entity.effect.EffectControllerComponent;
 import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.modules.entity.damage.Damage;
 import com.hypixel.hytale.server.core.modules.entity.damage.DamageEventSystem;
@@ -14,8 +16,8 @@ import com.jammingmods.plugin.Components.PlayerTraitComponents.TraitDamageType;
 import com.jammingmods.plugin.Components.Whf_EffectOvertimeComponent;
 import com.jammingmods.plugin.Components.Whf_FactionComponent;
 import com.jammingmods.plugin.Readers.Whf_EffectOvertimeContainer;
-import com.jammingmods.plugin.Readers.Whf_EffectOvertimeParser;
 import com.jammingmods.plugin.Registries.Whf_ComponentRegistries;
+import com.jammingmods.plugin.WarhammerFantasyPlugin;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
@@ -32,28 +34,27 @@ public class Whf_OnDamageEvents extends DamageEventSystem {
             @NonNullDecl Damage damage)
     {
 
-        Whf_FactionComponent component = chunk.getComponent(i, Whf_ComponentRegistries.FACTION_COMPONENT_TYPE);
-        Ref<EntityStore> ref = null;
-        Store<EntityStore> sourceStore = null;
+        Ref<EntityStore> ref_player = null;
+        Store<EntityStore> store_player = null;
         if(!(damage.getSource() instanceof Damage.ProjectileSource) && damage.getSource() instanceof Damage.EntitySource) {
             Damage.EntitySource source = (Damage.EntitySource)damage.getSource();
-            ref = source.getRef();
-            sourceStore = ref.getStore();
+            ref_player = source.getRef();
+            store_player = ref_player.getStore();
             // increase melee damage
-            if(sourceStore != null){
-                HandleDamageModifier(damage, ref, sourceStore, TraitDamageType.MELEE);
+            if(store_player != null){
+                HandleDamageModifier(damage, ref_player, store_player, TraitDamageType.MELEE);
             }
 
         } else if (damage.getSource() instanceof Damage.ProjectileSource) {
             Damage.ProjectileSource source = (Damage.ProjectileSource)damage.getSource();
-            ref = source.getRef();
+            ref_player = source.getRef();
 
             //TODO: check if the projectile is a magic thing or not
 
-            if(ref.getStore().getComponent(ref, Whf_ComponentRegistries.FACTION_COMPONENT_TYPE) != null){
-                sourceStore = ref.getStore();
+            if(ref_player.getStore().getComponent(ref_player, Whf_ComponentRegistries.FACTION_COMPONENT_TYPE) != null){
+                store_player = ref_player.getStore();
                 // increase ranged damage
-                HandleDamageModifier(damage, ref, sourceStore, TraitDamageType.RANGED);
+                HandleDamageModifier(damage, ref_player, store_player, TraitDamageType.RANGED);
 
             }
         } else if (damage.getSource() instanceof Damage.EnvironmentSource) {
@@ -61,13 +62,15 @@ public class Whf_OnDamageEvents extends DamageEventSystem {
             // ah damn
         }
 
-        if(sourceStore != null){
+        if(store_player != null){
             // handle all the damage modification data
-            if(ref == null && !ref.isValid()) { return; }
+            if(ref_player == null && !ref_player.isValid()) { return; }
+            Whf_FactionComponent component = store_player.getComponent(ref_player, Whf_ComponentRegistries.FACTION_COMPONENT_TYPE);
 
-            Player player = sourceStore.getComponent(ref, Player.getComponentType());
-            HandleSkavenGambleDamage(damage, ref, store, player);
+            Player player = store_player.getComponent(ref_player, Player.getComponentType());
+            HandleSkavenGambleDamage(damage, ref_player, store, player);
 
+            ApplyOvertimeEffects(component, chunk.getReferenceTo(i), store, player, cmd);
         }
     }
 
@@ -104,22 +107,33 @@ public class Whf_OnDamageEvents extends DamageEventSystem {
     /// Manage the effects on EffectOvertimeComponent
     /// Duration is in ticks, 20 ticks is one second
     /// Interval is in ticks, so 20 interval means every second it fires
-    private void ApplyOvertimeEffects(Whf_FactionComponent f_c, Ref<EntityStore> ref, Store<EntityStore> store, Player player){
+    private void ApplyOvertimeEffects(Whf_FactionComponent f_c, Ref<EntityStore> ref, Store<EntityStore> store, Player player, CommandBuffer cmb){
         Whf_EffectOvertimeComponent eo_c = store.getComponent(ref, Whf_ComponentRegistries.EFFECT_OVERTIME_COMPONENT_TYPE);
-        if(eo_c == null) {
-            store.putComponent(ref, Whf_ComponentRegistries.EFFECT_OVERTIME_COMPONENT_TYPE, new Whf_EffectOvertimeComponent());
+        if (eo_c == null) {
+            eo_c = new Whf_EffectOvertimeComponent();
+            cmb.putComponent(ref, Whf_ComponentRegistries.EFFECT_OVERTIME_COMPONENT_TYPE, eo_c);
         }
         for (Map.Entry<String, Double> entry : f_c.getTraits().entrySet()){
             String type = entry.getKey();
             Double value = entry.getValue();
             switch (type){
                 case "SkavenPoisonOnMelee":
-                    Whf_EffectOvertimeContainer e_v = Whf_EffectOvertimeParser.GetByType("SkavenPoison");
-                    eo_c.AddEffectOrIncreaseStacks(e_v.Type, e_v.TickDamage, e_v.DurationTicks, e_v.MaxStacks, e_v.Interval);
+                    Whf_EffectOvertimeContainer e_v = WarhammerFantasyPlugin.GetOvertimeEffect("SkavenPoison");
+                    eo_c.AddEffectOrIncreaseStacks(e_v.Type, e_v.TickDamage, e_v.DurationTicks, e_v.MaxStacks, (float) e_v.IntervalTicks);
+                    ApplyEffect("SkavenPoison_Effect", e_v.DurationTicks, OverlapBehavior.OVERWRITE, ref ,store);
             }
         }
     }
 
+    private void ApplyEffect(String key, float duration, OverlapBehavior overlapBehavior, Ref<EntityStore> ref, Store<EntityStore> store){
+        EntityEffect effect = EntityEffect.getAssetMap().getAsset(key);
+        EffectControllerComponent controller = store.getComponent(ref, EffectControllerComponent.getComponentType());
+
+        if(controller != null && effect != null) {
+            controller.addEffect(ref, effect, duration, overlapBehavior, store);
+        }
+
+    }
 
     @NullableDecl
     @Override

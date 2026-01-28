@@ -1,0 +1,24 @@
+{
+  "ApplicationEffects": {
+    "EntityBottomTint": "#0c290c",
+    "EntityTopTint": "#075707",
+    "EntityAnimationId": "Hurt",
+    "WorldSoundEventId": "SFX_Effect_Poison_World",
+    "LocalSoundEventId": "SFX_Effect_Poison_Local",
+    "Particles": [
+      {
+        "SystemId": "Effect_Poison"
+      }
+    ],
+    "MouseSensitivityAdjustmentTarget": 0
+  },
+  "DamageEffects": {
+    "WorldSoundEventId": "SFX_Effect_Poison_World",
+    "PlayerSoundEventId": "SFX_Effect_Poison_Local"
+  },
+  "RemovalBehavior": "Duration",
+  "Infinite": false,
+  "Debuff": true,
+  "StatusEffectIcon": "UI/StatusEffects/Poison.png",
+  "Duration": 10
+}

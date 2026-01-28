@@ -42,6 +42,14 @@ public class EffectOvertimeDef {
         return this.currentStacks;
     }
 
+    public float GetElapsedTime(){
+        return this.elapsedTime;
+    }
+
+    public void ResetTickcount(int duration){
+        this.remainingTicks = duration;
+    }
+
     public void AddElapsedTime(float dt){
         this.elapsedTime += dt;
     }
@@ -56,11 +64,23 @@ public class EffectOvertimeDef {
     }
 
     public boolean IsValid(){
+        if(this.remainingTicks <= 0){
+            return false;
+        }
         if(this.elapsedTime >= this.interval){
             this.ResetElapsedTime();
             return true;
         }
         return false;
+    }
+
+    public String ToString(){
+        return "Type: " + this.type +
+                " - currentstack: " + this.currentStacks +
+                " - maxstacks: " + this.maxStacks +
+                " - remainingticks: " + this.remainingTicks +
+                " - interval: " + this.interval +
+                " - elapsedTime: " + this.elapsedTime;
     }
 
     public static final BuilderCodec<EffectOvertimeDef> CODEC = BuilderCodec.builder(
